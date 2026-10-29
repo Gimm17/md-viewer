@@ -4,10 +4,12 @@
 # What it does:
 #   1. Copies the built EXE to %LOCALAPPDATA%\MD Viewer\md-viewer.exe
 #      (a stable path, outside OneDrive, so associations don't break).
-#   2. Registers a ProgID + Application entry so MD Viewer appears in the
+#   2. Copies appIcon.ico and registers it cleanly in the Registry without ",0"
+#      so Windows Explorer immediately displays the MD Viewer logo on .md files.
+#   3. Registers a ProgID + Application entry so MD Viewer appears in the
 #      Windows "Open with" list and becomes default for .md / .markdown / .mdown / .mkd.
-#   3. Creates a Start Menu shortcut for easy searching and launching.
-#   4. Notifies the shell so the changes show up immediately.
+#   4. Creates a Start Menu shortcut for easy searching and launching.
+#   5. Notifies the shell and refreshes Explorer icon cache.
 
 param(
     [string]$ExePath
@@ -75,7 +77,8 @@ foreach ($cand in $icoCandidates) {
 $targetIco = Join-Path $installDir "appIcon.ico"
 if ($icoSource -and (Test-Path $icoSource)) {
     Copy-Item -Path $icoSource -Destination $targetIco -Force
-    $iconRef = "$targetIco,0"
+    # For a .ico file, Windows expects the bare path (WITHOUT ,0)
+    $iconRef = "$targetIco"
     Write-Host "Copied icon -> $targetIco"
 } else {
     $iconRef = "$targetExe,0"
@@ -118,6 +121,11 @@ foreach ($ext in $Extensions) {
     $extKey = Join-Path $classesKey $ext
     New-Item -Path $extKey -Force | Out-Null
     Set-ItemProperty -Path $extKey -Name "(Default)" -Value $ProgId
+    
+    # Assign DefaultIcon directly to the extension key so Explorer picks it up immediately
+    New-Item -Path (Join-Path $extKey "DefaultIcon") -Force | Out-Null
+    Set-ItemProperty -Path (Join-Path $extKey "DefaultIcon") -Name "(Default)" -Value $iconRef
+
     $owpKey = Join-Path $extKey "OpenWithProgids"
     New-Item -Path $owpKey -Force | Out-Null
     Set-ItemProperty -Path $owpKey -Name $ProgId -Value ([byte[]]@()) -Type None
@@ -147,14 +155,14 @@ if (Test-Path $startMenuDir) {
     }
 }
 
-# --- Notify the shell so changes appear without a reboot/logoff ---
+# --- 5) Notify the shell and refresh icon cache ---
 Add-Type -Namespace Win32 -Name Shell -MemberDefinition @"
 [System.Runtime.InteropServices.DllImport("shell32.dll")]
 public static extern void SHChangeNotify(int eventId, int flags, System.IntPtr item1, System.IntPtr item2);
 "@
-# SHCNE_ASSOCCHANGED = 0x08000000, SHCNF_IDLIST = 0x0000
-[Win32.Shell]::SHChangeNotify(0x08000000, 0x0000, [System.IntPtr]::Zero, [System.IntPtr]::Zero)
+# SHCNE_ASSOCCHANGED = 0x08000000, SHCNF_IDLIST = 0x0000, SHCNF_FLUSH = 0x1000
+[Win32.Shell]::SHChangeNotify(0x08000000, 0x1000, [System.IntPtr]::Zero, [System.IntPtr]::Zero)
 
 Write-Host ""
-Write-Host "MD Viewer successfully installed for the current user!" -ForegroundColor Green
+Write-Host "MD Viewer successfully installed with custom icon!" -ForegroundColor Green
 Write-Host "Installed location: $installDir"

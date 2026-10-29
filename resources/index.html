@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MD Viewer</title>
+    <link rel="stylesheet" href="/css/github-markdown.css" />
+    <link rel="stylesheet" href="/css/katex.min.css" />
+    <link rel="stylesheet" href="/css/highlight-github.css" />
+    <link rel="stylesheet" href="/css/app.css" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- Top toolbar -->
+      <header id="toolbar">
+        <div class="toolbar-left">
+          <button class="icon-btn" id="btn-toc" title="Toggle Table of Contents (Ctrl+B)" aria-label="Toggle sidebar">
+            <span class="icon">&#9776;</span>
+          </button>
+          <span id="filename" title="No file open">Untitled</span>
+          <span id="dirty-dot" class="hidden" title="Unsaved changes">&#9679;</span>
+        </div>
+
+        <div class="toolbar-tabs" role="tablist">
+          <button class="tab active" id="tab-view" role="tab" aria-selected="true">View</button>
+          <button class="tab" id="tab-edit" role="tab" aria-selected="false">Edit</button>
+        </div>
+
+        <div class="toolbar-right">
+          <button class="text-btn" id="btn-open" title="Open (Ctrl+O)">Open</button>
+          <button class="text-btn" id="btn-save" title="Save (Ctrl+S)">Save</button>
+          <button class="text-btn" id="btn-export" title="Export as PDF (Ctrl+Shift+P)">Export PDF</button>
+          <button class="icon-btn" id="btn-print" title="Print (Ctrl+P)" aria-label="Print">&#9098;</button>
+          <button class="icon-btn" id="btn-theme" title="Toggle theme (Ctrl+Shift+T)" aria-label="Toggle theme">&#127761;</button>
+        </div>
+      </header>
+
+      <!-- Body: sidebar + content -->
+      <div id="main">
+        <aside id="sidebar" class="hidden">
+          <div class="sidebar-header">Contents</div>
+          <nav id="toc"></nav>
+        </aside>
+
+        <section id="content">
+          <!-- View mode -->
+          <article id="preview" class="markdown-body"></article>
+          <!-- Edit mode -->
+          <div id="editor" class="hidden"></div>
+        </section>
+      </div>
+    </div>
+
+    <script src="/js/neutralino.js"></script>
+    <script src="/js/app.bundle.js"></script>
+  </body>
+</html>

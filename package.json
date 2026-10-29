@@ -1,0 +1,42 @@
+{
+  "name": "md-viewer",
+  "version": "1.0.0",
+  "description": "Lightweight Markdown viewer/editor desktop app (Neutralinojs + WebView2)",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "watch:js": "esbuild src/main.js --bundle --outfile=resources/js/app.bundle.js --platform=browser --format=iife --sourcemap --watch",
+    "build:js": "esbuild src/main.js --bundle --outfile=resources/js/app.bundle.js --platform=browser --format=iife --minify",
+    "copy:assets": "node scripts/copy-assets.js",
+    "prebuild": "npm run copy:assets",
+    "dev": "npm run copy:assets && concurrently -k \"npm:watch:js\" \"neu run\"",
+    "build": "npm run build:js && npm run copy:assets && neu build --release --embed-resources",
+    "package:zip": "node scripts/package-release.js",
+    "install:app": "powershell -ExecutionPolicy Bypass -File scripts/install.ps1",
+    "uninstall:app": "powershell -ExecutionPolicy Bypass -File scripts/uninstall.ps1",
+    "neu": "neu"
+  },
+  "dependencies": {
+    "@codemirror/commands": "^6.6.2",
+    "@codemirror/lang-markdown": "^6.3.1",
+    "@codemirror/language": "^6.10.3",
+    "@codemirror/search": "^6.5.7",
+    "@codemirror/state": "^6.4.1",
+    "@codemirror/theme-one-dark": "^6.1.2",
+    "@codemirror/view": "^6.34.1",
+    "dompurify": "^3.1.7",
+    "github-markdown-css": "^5.8.1",
+    "highlight.js": "^11.10.0",
+    "html2pdf.js": "^0.14.0",
+    "jspdf": "^3.0.4",
+    "katex": "^0.16.11",
+    "markdown-it": "^14.1.0",
+    "markdown-it-task-lists": "^2.1.1",
+    "markdown-it-texmath": "^1.0.0"
+  },
+  "devDependencies": {
+    "@neutralinojs/neu": "^11.3.1",
+    "concurrently": "^9.0.1",
+    "esbuild": "^0.24.0"
+  }
+}

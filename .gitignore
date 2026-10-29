@@ -1,0 +1,26 @@
+# Dependencies
+/node_modules
+
+# Neutralinojs binaries and builds
+/bin
+/dist
+
+# Neutralinojs client (minified) — fetched by `neu update`
+neutralino.js
+
+# Generated/bundled assets (produced by `npm run build:js` + `npm run copy:assets`)
+/resources/js/app.bundle.js
+/resources/js/app.bundle.js.map
+/resources/css/app.css
+/resources/css/github-markdown.css
+/resources/css/highlight-github.css
+/resources/css/katex.min.css
+/resources/css/fonts/
+
+# Neutralinojs related files
+.storage
+*.log
+.tmp
+
+# Developer tools' files
+.lite_workspace.lua

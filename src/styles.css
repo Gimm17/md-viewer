@@ -1,0 +1,242 @@
+/* ============ MD Viewer — app chrome ============ */
+/* Theme variables (light default; dark overrides below) */
+:root {
+  --toolbar-bg: #f6f8fa;
+  --toolbar-border: #d0d7de;
+  --toolbar-fg: #1f2328;
+  --btn-hover: #eaeef2;
+  --btn-active: #dde3ea;
+  --sidebar-bg: #f6f8fa;
+  --sidebar-border: #d0d7de;
+  --sidebar-fg: #57606a;
+  --sidebar-active: #0969da;
+  --content-bg: #ffffff;
+  --accent: #0969da;
+}
+
+html[data-theme="dark"] {
+  --toolbar-bg: #161b22;
+  --toolbar-border: #30363d;
+  --toolbar-fg: #e6edf3;
+  --btn-hover: #21262d;
+  --btn-active: #30363d;
+  --sidebar-bg: #0d1117;
+  --sidebar-border: #30363d;
+  --sidebar-fg: #8b949e;
+  --sidebar-active: #58a6ff;
+  --content-bg: #0d1117;
+  --accent: #58a6ff;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+    Helvetica, Arial, sans-serif;
+}
+
+body { background: var(--content-bg); }
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* ---------- Toolbar ---------- */
+#toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 10px;
+  background: var(--toolbar-bg);
+  border-bottom: 1px solid var(--toolbar-border);
+  color: var(--toolbar-fg);
+  user-select: none;
+  flex: 0 0 auto;
+}
+
+.toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+#filename {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 320px;
+}
+
+#dirty-dot { color: var(--accent); font-size: 14px; line-height: 1; }
+
+.toolbar-tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--btn-hover);
+  border-radius: 6px;
+  padding: 2px;
+  flex: 0 0 auto;
+}
+
+.tab {
+  border: none;
+  background: transparent;
+  color: var(--toolbar-fg);
+  font-size: 13px;
+  padding: 4px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.tab.active { background: var(--content-bg); font-weight: 600; }
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1 1 auto;
+  justify-content: flex-end;
+}
+
+.icon-btn, .text-btn {
+  border: none;
+  background: transparent;
+  color: var(--toolbar-fg);
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 14px;
+  line-height: 1;
+}
+.text-btn { font-size: 13px; font-weight: 500; }
+.icon-btn:hover, .text-btn:hover { background: var(--btn-hover); }
+.icon-btn:active, .text-btn:active { background: var(--btn-active); }
+
+/* ---------- Main area ---------- */
+#main {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+#sidebar {
+  flex: 0 0 250px;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
+  overflow-y: auto;
+  padding: 10px 0;
+}
+#sidebar.hidden { display: none; }
+
+.sidebar-header {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--sidebar-fg);
+  padding: 4px 16px 8px;
+}
+
+#toc ul { list-style: none; margin: 0; padding: 0; }
+#toc li { margin: 0; }
+#toc a {
+  display: block;
+  color: var(--sidebar-fg);
+  text-decoration: none;
+  font-size: 13px;
+  padding: 4px 16px;
+  border-left: 2px solid transparent;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#toc a:hover { color: var(--sidebar-active); background: var(--btn-hover); }
+#toc a.toc-h2 { padding-left: 28px; }
+#toc a.toc-h3 { padding-left: 40px; }
+#toc a.toc-h4 { padding-left: 52px; }
+#toc a.active { color: var(--sidebar-active); border-left-color: var(--sidebar-active); font-weight: 600; }
+
+#content {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: auto;
+  background: var(--content-bg);
+  position: relative;
+}
+
+/* Preview: constrain like GitHub */
+#preview.markdown-body {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 40px 80px;
+  background: var(--content-bg);
+}
+#preview.hidden { display: none; }
+
+/* Placeholder when empty */
+#preview:empty::before {
+  content: "Open a Markdown file (Ctrl+O) or drag one here.";
+  display: block;
+  color: var(--sidebar-fg);
+  text-align: center;
+  margin-top: 20vh;
+  font-size: 14px;
+}
+
+/* ---------- Editor ---------- */
+#editor {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+#editor.hidden { display: none; }
+
+.cm-editor { height: 100%; font-size: 14px; }
+.cm-scroller {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas,
+    "Liberation Mono", Menlo, monospace;
+}
+
+/* ---------- Utility ---------- */
+.hidden { display: none !important; }
+
+/* ---------- Print ---------- */
+@media print {
+  #toolbar, #sidebar { display: none !important; }
+  #app, #main, #content { display: block; height: auto; overflow: visible; }
+  html, body { overflow: visible; height: auto; background: #fff; }
+  #editor { display: none !important; }
+  #preview.markdown-body {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    color: #1f2328;
+    background: #fff;
+  }
+  /* Avoid splitting these elements across page breaks. */
+  pre, table, blockquote, img, tr { page-break-inside: avoid; break-inside: avoid; }
+  h1, h2, h3, h4 { page-break-after: avoid; break-after: avoid; }
+}
+
+/* ---------- PDF export (html2pdf.js) ---------- */
+/* Keep these elements together so html2pdf doesn't split them across pages. */
+#preview pre, #preview table, #preview blockquote,
+#preview img, #preview tr, #preview .katex, #preview .katex-display {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+#preview h1, #preview h2, #preview h3, #preview h4,
+#preview h5, #preview h6 {
+  break-after: avoid;
+  page-break-after: avoid;
+}

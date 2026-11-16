@@ -1,112 +1,95 @@
-# MD Viewer
+<div align="center">
 
-A lightweight Windows desktop app for **viewing and editing Markdown (`.md`) files** —
-like Notepad, but purpose-built for Markdown with clean, GitHub-style rendering
-(comparable to VSCode's Markdown preview, `Ctrl+Shift+V`).
+# 📝 MD Viewer
 
-Built with **Neutralinojs + WebView2** — the app uses the OS's built-in WebView2
-(no bundled Chromium), so the final EXE is only a few MB.
+### Lightweight Windows Desktop Markdown Viewer & Editor (Neutralinojs + WebView2)
 
-## Features
+[![Neutralinojs](https://img.shields.io/badge/Neutralinojs-WebView2-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://neutralino.js.org/)
+[![CodeMirror](https://img.shields.io/badge/Editor-CodeMirror%206-D30707?style=for-the-badge)](https://codemirror.net/)
+[![KaTeX](https://img.shields.io/badge/Math-KaTeX%20Offline-329B8C?style=for-the-badge)](https://katex.org/)
+[![Platform](https://img.shields.io/badge/Platform-Windows%2010%20%2F%2011-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://www.microsoft.com/windows)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-- **View + Edit modes** — switch with the toolbar tabs (or `Ctrl+E`).
-- **GitHub-style rendering** — `markdown-it` with GFM tables, task lists,
-  strikethrough, and typographer.
-- **Syntax highlighting** — fenced code blocks via `highlight.js`.
-- **Math** — inline `$...$` and block `$$...$$` via **KaTeX** (fonts vendored, works offline).
-- **Light / Dark theme** — toggle with 🌓 (or `Ctrl+Shift+T`); preference remembered.
-- **Table of Contents sidebar** — auto-generated from headings, click to scroll (toggle with `Ctrl+B`).
-- **Export as PDF** — one-click PDF export (`Ctrl+Shift+P`); the rendered
-  document is saved to a file you pick, keeping the Markdown structure
-  (headings, tables, code blocks, math, lists) clean and tidy.
-- **Print** — standard print dialog (`Ctrl+P`); use "Save as PDF" there for
-  selectable-text output, or send to a printer.
-- **Drag & drop** — drop a `.md` file onto the window to open it.
-- **Safe rendering** — output sanitized with DOMPurify.
+*Purpose-built like Notepad for `.md` files — crisp GitHub-style rendering, offline KaTeX math, live editing, TOC navigation, and one-click PDF export in a ~4–5 MB portable EXE.*
 
-## Keyboard shortcuts
+</div>
 
-| Shortcut         | Action                  |
-| ---------------- | ----------------------- |
-| `Ctrl+O`         | Open file               |
-| `Ctrl+S`         | Save file               |
-| `Ctrl+P`         | Print                   |
-| `Ctrl+Shift+P`   | Export as PDF (file)    |
-| `Ctrl+E`         | Toggle View / Edit      |
-| `Ctrl+B`         | Toggle TOC sidebar      |
-| `Ctrl+Shift+T`   | Toggle light/dark theme |
+---
 
-## Development
+## ✨ Features
 
-```bash
-npm install          # install dependencies
-npm run dev          # copy assets, watch-bundle JS, and launch (neu run)
+| Feature | Details |
+| :--- | :--- |
+| **View + Edit Modes** | Switch cleanly via toolbar tabs or `Ctrl+E` (powered by **CodeMirror 6**) |
+| **GitHub-Style Rendering** | `markdown-it` with GFM tables, task lists, strikethrough, and typographer |
+| **Syntax Highlighting** | Fenced code blocks highlighted offline via `highlight.js` |
+| **Offline Math (KaTeX)** | Inline `$...$` and block `$$...$$` math with vendored fonts |
+| **Light / Dark Theme** | Toggle via toolbar button or `Ctrl+Shift+T` with saved preference |
+| **Table of Contents** | Auto-generated heading sidebar (`Ctrl+B`) with smooth click-to-scroll |
+| **Export to PDF & Print** | One-click PDF export (`Ctrl+Shift+P`) or standard Print (`Ctrl+P`) |
+| **Drag & Drop + Safe HTML** | Drop `.md` files directly onto the window; sanitized via **DOMPurify** |
+
+---
+
+## ⌨️ Keyboard Shortcuts
+
+| Shortcut | Action |
+| :--- | :--- |
+| `Ctrl+O` | Open file |
+| `Ctrl+S` | Save file |
+| `Ctrl+P` | Print |
+| `Ctrl+Shift+P` | Export as PDF |
+| `Ctrl+E` | Toggle View / Edit |
+| `Ctrl+B` | Toggle TOC sidebar |
+| `Ctrl+Shift+T` | Toggle light / dark theme |
+
+---
+
+## 📁 Project Structure
+
+```text
+md-viewer/
+├── src/
+│   ├── main.js               # Entry: init, UI wiring, mode switching, shortcuts
+│   ├── renderer.js           # markdown-it + KaTeX + highlight.js + DOMPurify
+│   ├── editor.js             # CodeMirror 6 editor
+│   ├── toc.js                # Table-of-contents builder
+│   ├── io.js                 # Open/save dialogs + filesystem access
+│   ├── theme.js              # Light/dark toggle + persistence
+│   └── styles.css            # Application chrome
+├── scripts/
+│   └── copy-assets.js        # Vendors CSS/fonts/client-lib into resources/
+├── resources/                # Runtime assets loaded by WebView2
+├── samples/demo.md           # Feature showcase Markdown
+└── neutralino.config.json
 ```
 
-`npm run dev` runs esbuild in watch mode over `src/` and launches the app via `neu run`.
+---
 
-## Build a release EXE
+## 🚀 Development, Build & Windows File Association
 
 ```bash
+# 1. Install dependencies
+npm install
+
+# 2. Run in development mode (esbuild watch + neu run)
+npm run dev
+
+# 3. Build single self-contained Windows EXE (~4–5 MB)
 npm run build
-```
+# Output: dist/md-viewer/md-viewer-win_x64.exe
 
-Produces a single self-contained executable at:
+# 4. Register "Open with -> MD Viewer" per-user (no admin required)
+npm run install:app
 
-```
-dist/md-viewer/md-viewer-win_x64.exe
-```
-
-(Resources are embedded via `--embed-resources`, so it's one portable file, ~4–5 MB.
-Requires WebView2, which ships with Windows 10/11.)
-
-## Install & file association (Windows)
-
-To make MD Viewer appear in the **"Open with"** menu and open `.md` files on
-double-click, run the installer after building. It works **per-user, without
-administrator rights** — it copies the EXE to `%LOCALAPPDATA%\MD Viewer\` and
-registers the `.md` / `.markdown` / `.mdown` / `.mkd` association in `HKCU`.
-
-```bash
-npm run build         # build the EXE first
-npm run install:app   # copy EXE + register file association
-```
-
-Then right-click any `.md` file → **Open with → MD Viewer** (tick *Always* to
-make it the default). Double-clicking a `.md` file will open it directly in the
-rendered view.
-
-To remove it:
-
-```bash
+# Uninstall file association
 npm run uninstall:app
 ```
 
+---
 
-## Project structure
+## 📄 License & Credits
 
-```
-src/            App source (bundled by esbuild)
-  main.js         Entry: init, UI wiring, mode switching, shortcuts
-  renderer.js     markdown-it + KaTeX + highlight.js + DOMPurify pipeline
-  editor.js       CodeMirror 6 (Edit mode)
-  toc.js          Table-of-contents builder
-  io.js           Open/save dialogs + filesystem
-  theme.js        Light/dark toggle + persistence
-  styles.css      App chrome (copied to resources/css/app.css)
-scripts/
-  copy-assets.js  Vendors CSS/fonts/client-lib into resources/
-resources/      Runtime assets loaded by the webview
-samples/
-  demo.md         Feature showcase
-neutralino.config.json
-```
-
-## License
-
-[MIT](LICENSE)
-
-## Credits
-
-- Icons: `trayIcon.png` by [Freepik](https://www.freepik.com) via [Flaticon](https://www.flaticon.com).
-- Built on [Neutralinojs](https://neutralino.js.org).
+- [MIT License](LICENSE)
+- Built with [Neutralinojs](https://neutralino.js.org) and Windows WebView2
+- Tray icon (`trayIcon.png`) by Freepik via Flaticon
